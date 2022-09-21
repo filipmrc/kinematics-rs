@@ -2,6 +2,7 @@ extern crate urdf_rs;
 extern crate nalgebra as na;
 
 use std::collections::HashMap;
+
 use urdf_rs::{Robot, JointType};
 use na::{Rotation3,
          Vector6,
@@ -12,7 +13,9 @@ use na::{Rotation3,
          RealField
 };
 
-use crate::utils::{adj_se3, exp_se3, parse_from_root, revolute_joint_screw};
+use crate::utils::{adj_se3, exp_se3};
+use crate::kinematics::{parse_from_root, revolute_joint_screw, _fk, _jac};
+
 pub struct Chain<T: RealField + Copy> {
     pub urdf: Robot,
     pub xfs_home: HashMap<String, Matrix4<T>>,
@@ -74,23 +77,20 @@ impl<T: RealField + Copy> Chain<T> {
 
     pub fn fk(&self, config: &Vec<T>, target: &String) -> Matrix4<T> {
         // Perform forward kinematics for target frame given config vector./////
-        let mut xf = Matrix4::<T>::identity();
-        for (idx, joint_name) in self.parents[target].iter().enumerate() {
-            xf *= exp_se3(&self.screws[joint_name], config[idx]);
+        let mut screws: Vec<Vector6<T>> = vec![];
+        for joint_name in &self.parents[target] {
+            screws.push(self.screws[joint_name])
         }
-        xf*self.xfs_home[target]
+        _fk(&screws, &self.xfs_home[target], &config[..screws.len()].to_vec())
     }
 
     pub fn jacobian(&self, config: &Vec<T>, target: &String) -> Matrix6xX<T> {
         // Get Jacobian for target frame given config vector./////
-        let mut jac = Matrix6xX::<T>::from_element(self.parents[target].len(), T::zero());
-        let mut xf = Matrix4::<T>::identity();
-        for (idx, joint_name) in self.parents[target].iter().enumerate() {
-            xf *= exp_se3(&self.screws[joint_name], config[idx]);
-            let adj = adj_se3(&xf);
-            jac.index_mut((.., idx)).copy_from(&(adj*self.screws[joint_name]));
+        let mut screws: Vec<Vector6<T>> = vec![];
+        for joint_name in &self.parents[target] {
+            screws.push(self.screws[joint_name])
         }
-        jac
+        _jac(&screws, &config[..screws.len()].to_vec())
     }
 
     pub fn fk_and_jac(&self, config: &Vec<T>, target: &String) -> (Matrix4<T>, Matrix6xX<T>) {
