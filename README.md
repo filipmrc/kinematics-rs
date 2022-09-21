@@ -8,7 +8,7 @@ NOTE: This library is still in very early stages of development.
 
 # Usage
 Simple usage example:
-```
+```rust
 use rustik::{Chain};
 
 fn main() {
