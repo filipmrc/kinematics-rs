@@ -2,11 +2,9 @@ extern crate urdf_rs;
 extern crate nalgebra as na;
 
 use std::collections::HashMap;
-use urdf_rs::{Joint, Link, Robot, Result, JointType};
+use urdf_rs::{Robot, JointType};
 use na::{Rotation3,
-         Vector3,
          Vector6,
-         DVector,
          IsometryMatrix3,
          Translation3,
          Matrix4,

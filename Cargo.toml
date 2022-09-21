@@ -10,3 +10,7 @@ ndarray = "0.15.6"
 nalgebra = "0.31.1"
 urdf-rs = "0.6.5"
 simba = "0.7.2"
+
+[[bin]]
+name = "example"
+path = "src/example.rs"
