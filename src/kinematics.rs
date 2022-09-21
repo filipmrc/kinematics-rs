@@ -39,7 +39,7 @@ pub fn revolute_joint_screw<T: RealField + Copy>(xf_joint: &Matrix4::<T>, rev_ax
         Vector6::<T>::new(axis[0], axis[1], axis[2], rho[0], rho[1], rho[2])
 }
 
-pub fn _fk<T: RealField + Copy>(screws: &Vec<Vector6<T>>, xf_home: &Matrix4<T>, config: &Vec<T>) -> Matrix4<T> {
+pub fn _fk<T: RealField + Copy>(screws: &Vec<Vector6<T>>, xf_home: &Matrix4<T>, config: &[T]) -> Matrix4<T> {
         let mut xf = Matrix4::<T>::identity();
         for idx in 0..config.len() {
             xf *= exp_se3(&screws[idx], config[idx]);
@@ -47,7 +47,7 @@ pub fn _fk<T: RealField + Copy>(screws: &Vec<Vector6<T>>, xf_home: &Matrix4<T>, 
         xf*xf_home
 }
 
-pub fn _jac<T: RealField + Copy>(screws: &Vec<Vector6<T>>, config: &Vec<T>) -> Matrix6xX<T> {
+pub fn _jac<T: RealField + Copy>(screws: &Vec<Vector6<T>>, config: &[T]) -> Matrix6xX<T> {
         let mut jac = Matrix6xX::<T>::from_element(screws.len(), T::zero());
         let mut xf = Matrix4::<T>::identity();
         for idx in 0..config.len() {

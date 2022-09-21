@@ -21,17 +21,15 @@ pub fn left_jacobian_so3<T: RealField + Copy>(axis: &Vector3<T>, angle: T) -> Ma
     if angle.abs() < T::from_f32(1e-6).unwrap() {
         Matrix3::identity() + ax_wedge*T::from_f32(0.5).unwrap()
     } else {
-        Matrix3::identity()*(angle.sin()/angle) + ax_wedge*((T::one() - angle.cos())/(angle)) + (axis*axis.transpose())*((T::from_f32(1.0).unwrap() - angle.sin())/(angle))
+        Matrix3::identity()*(angle.sin()/angle) + ax_wedge*((T::one() - angle.cos())/(angle)) + (axis*axis.transpose())*((T::one() - angle.sin())/(angle))
     }
 }
 
 pub fn exp_so3<T: RealField + Copy>(axis: &Vector3<T>, angle: T) -> Matrix3<T> {
     // Computes an SO3 matrix from angle + rotation axis representation
-    // DEPRECATED explicit implementation
-    // let ax_wedge = wedge(&axis);
-    // Matrix3::identity() + ax_wedge*((1.0 - angle.cos())/(angle.powi(2))) + ((angle - angle.sin())/(angle.powi(3)))*(ax_wedge*ax_wedge)
-
-    Rotation3::new(axis*angle).into_inner()
+    let ax_wedge = wedge(&axis);
+    Matrix3::identity() + ax_wedge*((T::one() - angle.cos())/(angle.powi(2))) + (ax_wedge*ax_wedge)*((angle - angle.sin())/(angle.powi(3)))
+    // Rotation3::new(axis*angle).into_inner()
 }
 
 pub fn exp_se3<T: RealField + Copy>(screw: &Vector6<T>, angle: T) -> Matrix4<T> {

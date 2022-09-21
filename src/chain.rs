@@ -2,7 +2,8 @@ extern crate urdf_rs;
 extern crate nalgebra as na;
 
 use std::collections::HashMap;
-
+use rand::Rng;
+use rand::distributions::Uniform;
 use urdf_rs::{Robot, JointType};
 use na::{Rotation3,
          Vector6,
@@ -77,20 +78,14 @@ impl<T: RealField + Copy> Chain<T> {
 
     pub fn fk(&self, config: &Vec<T>, target: &String) -> Matrix4<T> {
         // Perform forward kinematics for target frame given config vector./////
-        let mut screws: Vec<Vector6<T>> = vec![];
-        for joint_name in &self.parents[target] {
-            screws.push(self.screws[joint_name])
-        }
-        _fk(&screws, &self.xfs_home[target], &config[..screws.len()].to_vec())
+        let screws = self.parents[target].iter().map(|k| self.screws[k]).collect();
+        _fk(&screws, &self.xfs_home[target], &config[..screws.len()])
     }
 
     pub fn jacobian(&self, config: &Vec<T>, target: &String) -> Matrix6xX<T> {
         // Get Jacobian for target frame given config vector./////
-        let mut screws: Vec<Vector6<T>> = vec![];
-        for joint_name in &self.parents[target] {
-            screws.push(self.screws[joint_name])
-        }
-        _jac(&screws, &config[..screws.len()].to_vec())
+        let screws = self.parents[target].iter().map(|k| self.screws[k]).collect();
+        _jac(&screws, &config[..screws.len()])
     }
 
     pub fn fk_and_jac(&self, config: &Vec<T>, target: &String) -> (Matrix4<T>, Matrix6xX<T>) {
@@ -103,5 +98,20 @@ impl<T: RealField + Copy> Chain<T> {
             jac.index_mut((.., idx)).copy_from(&(adj*self.screws[joint_name]));
         }
         (xf*self.xfs_home[target] , jac)
+    }
+
+    pub fn dof(&self) -> usize {
+       self.screws.len()
+    }
+
+    pub fn random_config(&self) -> Vec<T> {
+        let mut rng = rand::thread_rng();
+        let range = Uniform::new(-std::f64::consts::PI, std::f64::consts::PI);
+        let mut config = Vec::<T>::with_capacity(self.dof());
+
+        for _ in 0..self.screws.len() {
+            config.push(T::from_f64(rng.sample(&range)).unwrap());
+        }
+        config
     }
 }

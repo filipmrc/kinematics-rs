@@ -1,7 +1,6 @@
 extern crate nalgebra as na;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use rustik::kinematics::{_fk};
 use rustik::{Chain};
 use na::{Vector6};
 
