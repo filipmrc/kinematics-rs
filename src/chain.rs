@@ -37,7 +37,7 @@ impl<T: RealField + Copy> Chain<T> {
         let mut xfs_home: HashMap<String, Matrix4<T>> = HashMap::new();
         let mut screws : HashMap<String, Vector6<T>> = HashMap::new();
         let mut parents: HashMap<String, Vec<String>> = HashMap::new();
-        let mut active_joints: Vec<String> = vec![];
+        let mut active_joints = Vec::<String>::new();
 
         for joint in &joints {
 
