@@ -1,4 +1,4 @@
-use rustik::{Chain};
+use kinematics_rs::{Chain};
 
 fn main() {
     // Initialize Chain object that loads the robot URDF

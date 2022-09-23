@@ -5,7 +5,6 @@ use na::{Vector3,
          Matrix4,
          Matrix6,
          RealField,
-         Rotation3,
          Isometry3
 };
 
