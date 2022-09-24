@@ -1,10 +1,13 @@
 `kinematics-rs` is a minimal robot kinematics library written in Rust. 
 
+**NOTE**: This library is still in very early stages of development and started as a project for learning Rust. See a list of more feature-complete libraries [here](https://github.com/filipmrc/kinematics-rs/edit/master/README.md#other-libraries).
+
 The guiding principles of development for this library:
-- provably efficient implementation via detailed benchmarking
+- scope limited to forward problems for kinematic chains and trees
+- exhaustive unit testing for maintainng robustness
+- detailed benchmarks for provably high performance
 - bindings for other languages for simple integration into existing projects
 
-NOTE: This library is still in very early stages of development.
 
 # Usage
 Simple usage example:
